@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>Chat</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<style>
+body{font-family:sans-serif;background:#0f172a;color:white;}
+.box{width:360px;margin:auto;margin-top:50px;background:#111827;padding:10px;border-radius:10px;}
+.user{background:#374151;margin:5px;padding:5px;cursor:pointer;border-radius:5px;}
+.msg{background:#374151;margin:5px;padding:5px;border-radius:5px;}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h3>کاربران</h3>
+<div id="users"></div>
+
+<hr>
+
+<h3 id="title"></h3>
+
+<div id="msgs"></div>
+
+<input id="text">
+<button onclick="send()">ارسال</button>
+
+</div>
+
+<script>
+
+const supabase = window.supabase.createClient(
+"https://ctfkzshjeppxmckxgcxb.supabase.co",
+"sb_publishable_4kdBgIgvDyU2Vd9u6N--Ng_3xpqZjMK"
+);
+
+let me = localStorage.getItem("user");
+let selected=null;
+
+// اگر لاگین نکرده بود
+if(!me){
+location.href="index.html";
+}
+
+// کاربران
+async function loadUsers(){
+let {data}=await supabase.from("users").select("*");
+
+users.innerHTML="";
+
+data.forEach(u=>{
+if(u.username!==me){
+users.innerHTML+=`
+<div class="user" onclick="openChat('${u.username}')">
+${u.username}
+</div>
+`;
+}
+});
+}
+
+async function openChat(u){
+selected=u;
+title.innerText="چت با "+u;
+loadMessages();
+}
+
+async function send(){
+let text=document.getElementById("text").value;
+if(!text||!selected) return;
+
+await supabase.from("messages").insert([
+{
+sender:me,
+receiver:selected,
+message:text
+}
+]);
+
+document.getElementById("text").value="";
+loadMessages();
+}
+
+async function loadMessages(){
+let {data}=await supabase
+.from("messages")
+.select("*")
+.or(
+`and(sender.eq.${me},receiver.eq.${selected}),and(sender.eq.${selected},receiver.eq.${me})`
+);
+
+msgs.innerHTML="";
+
+data.forEach(m=>{
+msgs.innerHTML+=`
+<div class="msg">
+<b>${m.sender}:</b> ${m.message}
+</div>
+`;
+});
+}
+
+loadUsers();
+
+</script>
+
+</body>
+</html>
