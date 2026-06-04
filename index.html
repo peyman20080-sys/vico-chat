@@ -5,207 +5,114 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vico Bot</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;700&display=swap" rel="stylesheet">
+
 <style>
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:sans-serif;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Vazirmatn', sans-serif;
 }
 
 body{
-background:radial-gradient(circle at top,#0f172a,#020617);
-color:white;
-overflow-x:hidden;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#1c92d2);
+    background-size:400% 400%;
+    animation: bg 10s ease infinite;
+    color:white;
 }
 
-/* HEADER */
-header{
-position:fixed;
-top:0;
-width:100%;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px;
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(10px);
-border-bottom:1px solid rgba(255,255,255,0.1);
-z-index:10;
+@keyframes bg{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
 }
 
-.logo{
-font-size:18px;
-font-weight:bold;
-color:#38bdf8;
+.container{
+    width:90%;
+    max-width:420px;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(12px);
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 0 25px rgba(0,0,0,0.4);
+    text-align:center;
 }
 
-/* HAMBURGER */
-.hamburger{
-width:28px;
-cursor:pointer;
+h1{
+    font-size:28px;
+    margin-bottom:10px;
 }
 
-.hamburger div{
-height:3px;
-background:white;
-margin:5px 0;
-border-radius:5px;
-transition:0.3s;
+.tag{
+    font-size:14px;
+    opacity:0.8;
+    margin-bottom:20px;
 }
 
-/* MENU */
-.menu{
-position:fixed;
-top:0;
-right:-100%;
-width:70%;
-height:100%;
-background:#0f172a;
-padding:20px;
-transition:0.3s;
-box-shadow:-20px 0 40px rgba(0,0,0,0.6);
-}
-
-.menu a{
-display:block;
-color:white;
-text-decoration:none;
-margin:20px 0;
-font-size:18px;
-}
-
-.menu.active{
-right:0;
-}
-
-/* HERO */
-.hero{
-height:100vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-text-align:center;
-padding:20px;
-}
-
-.hero h1{
-font-size:40px;
-color:#38bdf8;
-text-shadow:0 0 20px #38bdf8;
-}
-
-.hero p{
-margin-top:10px;
-color:#cbd5e1;
-}
-
-/* CARD */
 .card{
-margin:15px;
-padding:18px;
-border-radius:15px;
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(10px);
-border:1px solid rgba(255,255,255,0.1);
-transition:0.3s;
+    background:rgba(255,255,255,0.08);
+    padding:15px;
+    border-radius:15px;
+    margin:10px 0;
 }
 
-.card:hover{
-transform:scale(1.02);
-box-shadow:0 0 20px rgba(56,189,248,0.3);
+.btn{
+    display:block;
+    margin-top:10px;
+    padding:10px;
+    border-radius:12px;
+    text-decoration:none;
+    color:white;
+    background:linear-gradient(45deg,#00c6ff,#0072ff);
+    transition:0.3s;
 }
 
-.card h2{
-color:#38bdf8;
-margin-bottom:10px;
+.btn:hover{
+    transform:scale(1.05);
 }
 
-.card p{
-color:#cbd5e1;
-line-height:1.7;
-}
-
-/* BUTTON */
-button{
-width:100%;
-padding:12px;
-border:none;
-border-radius:10px;
-background:linear-gradient(90deg,#38bdf8,#6366f1);
-color:white;
-font-weight:bold;
-margin-top:10px;
-cursor:pointer;
-}
-
-/* ANIMATION */
-.fade{
-animation:fade 1s ease-in-out;
-}
-
-@keyframes fade{
-from{opacity:0;transform:translateY(20px);}
-to{opacity:1;transform:translateY(0);}
+.menu{
+    position:absolute;
+    top:15px;
+    right:15px;
+    font-size:24px;
+    cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-<div class="logo">Vico Bot ⚡</div>
+<div class="menu">☰</div>
 
-<div class="hamburger" onclick="toggleMenu()">
-<div></div>
-<div></div>
-<div></div>
+<div class="container">
+
+    <h1>Vico Bot 🤖</h1>
+    <div class="tag">ربات هوشمند روبیکا برای مدیریت و سرگرمی</div>
+
+    <div class="card">
+        <h3>📌 ربات Vico</h3>
+        <p>این ربات برای ارائه خدمات هوشمند، پاسخگویی و امکانات ویژه ساخته شده است.</p>
+        <a class="btn" href="https://rubika.ir/vicobot" target="_blank">ورود به ربات</a>
+    </div>
+
+    <div class="card">
+        <h3>📢 کانال رسمی</h3>
+        <p>برای دریافت آپدیت‌ها و اخبار ربات وارد کانال شوید.</p>
+        <a class="btn" href="https://rubika.ir/vico_bot" target="_blank">عضویت در کانال</a>
+    </div>
+
+    <div class="card">
+        <h3>👨‍💻 پشتیبانی</h3>
+        <p>@peyman_m_1</p>
+    </div>
+
 </div>
-</header>
-
-<!-- MENU -->
-<div class="menu" id="menu">
-<a href="#about" onclick="toggleMenu()">👤 درباره من</a>
-<a href="#bot" onclick="toggleMenu()">🤖 ربات Vico</a>
-<a href="#contact" onclick="toggleMenu()">📩 ارتباط</a>
-</div>
-
-<!-- HERO -->
-<section class="hero fade">
-<h1>VICO BOT</h1>
-<p>ربات هوشمند برای مدیریت و خدمات</p>
-</section>
-
-<!-- ABOUT -->
-<section class="card fade" id="about">
-<h2>👤 درباره من</h2>
-<p>
-من سازنده ربات Vico هستم 👨‍💻<br>
-۱۸ ساله هستم و بیش از ۳ سال تجربه در برنامه‌نویسی و ساخت ربات دارم.
-</p>
-</section>
-
-<!-- BOT -->
-<section class="card fade" id="bot">
-<h2>🤖 ربات Vico</h2>
-<p>
-ربات Vico یک پروژه هوشمند برای خدمات و مدیریت است که همیشه در حال توسعه می‌باشد 🚀
-</p>
-<button onclick="alert('Vico Bot معرفی شد 🚀')">مشاهده</button>
-</section>
-
-<!-- CONTACT -->
-<section class="card fade" id="contact">
-<h2>📩 ارتباط</h2>
-<p>برای ارتباط با من از طریق ربات یا کانال اقدام کنید.</p>
-</section>
-
-<script>
-function toggleMenu(){
-document.getElementById("menu").classList.toggle("active");
-}
-</script>
 
 </body>
 </html>
