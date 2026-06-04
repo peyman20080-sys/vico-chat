@@ -2,19 +2,17 @@
 <html lang="fa">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vico Bot</title>
 
 <style>
-*{
-margin:0;
-padding:0;
-font-family:sans-serif;
-box-sizing:border-box;
-}
-
 body{
+margin:0;
+font-family:sans-serif;
 background:linear-gradient(135deg,#0f172a,#1e293b);
 color:white;
+height:100vh;
+overflow-x:hidden;
 }
 
 /* HEADER */
@@ -22,14 +20,15 @@ header{
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:15px 20px;
-background:#111827;
-position:sticky;
+padding:15px;
+background:rgba(0,0,0,0.3);
+backdrop-filter:blur(10px);
+position:fixed;
 top:0;
+width:100%;
 }
 
 .logo{
-font-size:20px;
 font-weight:bold;
 color:#38bdf8;
 }
@@ -44,26 +43,28 @@ cursor:pointer;
 height:3px;
 background:white;
 margin:5px 0;
-transition:0.3s;
+border-radius:5px;
 }
 
 /* MENU */
 .menu{
 position:fixed;
 top:0;
-right:-250px;
-width:200px;
+right:-100%;
+width:70%;
 height:100%;
 background:#0f172a;
 padding:20px;
 transition:0.3s;
+box-shadow:-10px 0 30px rgba(0,0,0,0.5);
 }
 
 .menu a{
 display:block;
 color:white;
 text-decoration:none;
-margin:15px 0;
+margin:20px 0;
+font-size:18px;
 }
 
 .menu.active{
@@ -72,8 +73,13 @@ right:0;
 
 /* HERO */
 .hero{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
 text-align:center;
-padding:60px 20px;
+padding:20px;
 }
 
 .hero h1{
@@ -82,26 +88,37 @@ color:#38bdf8;
 }
 
 .hero p{
-margin-top:10px;
 color:#cbd5e1;
+margin-top:10px;
 }
 
 /* CARD */
 .card{
-background:#111827;
 margin:20px;
 padding:15px;
-border-radius:10px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(10px);
+border-radius:15px;
+}
+
+.card h2{
+color:#38bdf8;
+}
+
+.card p{
+color:#cbd5e1;
+line-height:1.6;
 }
 
 button{
 margin-top:10px;
-padding:10px;
+width:100%;
+padding:12px;
 border:none;
-border-radius:8px;
+border-radius:10px;
 background:#38bdf8;
 color:black;
-cursor:pointer;
+font-weight:bold;
 }
 </style>
 </head>
@@ -118,17 +135,20 @@ cursor:pointer;
 </div>
 </header>
 
+<!-- MENU -->
 <div class="menu" id="menu">
-<a href="#about">درباره من</a>
-<a href="#bot">ربات Vico</a>
-<a href="#contact">ارتباط</a>
+<a href="#about" onclick="toggleMenu()">👤 درباره من</a>
+<a href="#bot" onclick="toggleMenu()">🤖 ربات Vico</a>
+<a href="#contact" onclick="toggleMenu()">📩 ارتباط</a>
 </div>
 
+<!-- HERO -->
 <section class="hero">
 <h1>Vico Bot</h1>
 <p>یک ربات هوشمند برای روبیکا</p>
 </section>
 
+<!-- ABOUT -->
 <section class="card" id="about">
 <h2>درباره من</h2>
 <p>
@@ -137,16 +157,18 @@ cursor:pointer;
 </p>
 </section>
 
+<!-- BOT -->
 <section class="card" id="bot">
 <h2>ربات Vico</h2>
 <p>
-ربات Vico برای مدیریت، سرگرمی و خدمات هوشمند ساخته شده.
+ربات Vico برای مدیریت و خدمات هوشمند ساخته شده و همیشه در حال توسعه است 🚀
 </p>
-<button onclick="alert('ربات Vico معرفی شد 🚀')">
-بیشتر
+<button onclick="alert('Vico Bot معرفی شد 🚀')">
+مشاهده
 </button>
 </section>
 
+<!-- CONTACT -->
 <section class="card" id="contact">
 <h2>ارتباط</h2>
 <p>برای ارتباط با من از طریق ربات یا کانال اقدام کنید.</p>
