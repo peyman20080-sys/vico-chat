@@ -7,161 +7,198 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
-body {
-  font-family: sans-serif;
-  background: #0f172a;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+body{
+margin:0;
+font-family:sans-serif;
+background:#0f172a;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+color:white;
 }
 
-.box {
-  width: 360px;
-  background: #111827;
-  padding: 15px;
-  border-radius: 12px;
+.box{
+width:360px;
+background:#111827;
+padding:15px;
+border-radius:12px;
 }
 
-input, button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-  border-radius: 8px;
-  border: none;
+input,button{
+width:100%;
+padding:10px;
+margin-top:8px;
+border:none;
+border-radius:8px;
 }
 
-button {
-  background: #2563eb;
-  color: white;
-  cursor: pointer;
+button{
+background:#2563eb;
+color:white;
+cursor:pointer;
 }
 
-.chat { display: none; }
+#chat{display:none;}
 
-.msg {
-  background: #374151;
-  margin: 5px 0;
-  padding: 6px;
-  border-radius: 6px;
+.user{
+padding:8px;
+margin:5px 0;
+background:#374151;
+border-radius:6px;
+cursor:pointer;
+}
+
+.msg{
+background:#374151;
+margin:5px 0;
+padding:6px;
+border-radius:6px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🔵 ثبت نام / ورود -->
-<div class="box" id="authBox">
-  <h3>ثبت نام / ورود</h3>
+<!-- AUTH -->
+<div class="box" id="auth">
+<h3>ثبت نام / ورود</h3>
 
-  <input id="username" placeholder="نام کاربری (حداقل ۶)">
-  <input id="password" type="password" placeholder="رمز (حداقل ۶)">
+<input id="u" placeholder="نام کاربری (۶+)">
+<input id="p" type="password" placeholder="رمز (۶+)">
 
-  <button onclick="register()">ثبت نام</button>
-  <button onclick="login()">ورود</button>
+<button onclick="register()">ثبت نام</button>
+<button onclick="login()">ورود</button>
 </div>
 
-<!-- 🟢 چت -->
-<div class="box chat" id="chatBox">
+<!-- CHAT -->
+<div class="box" id="chat">
 
-  <h3>Vico Chat</h3>
+<h3>کاربران</h3>
+<div id="users"></div>
 
-  <input id="targetUser" placeholder="نام کاربری طرف مقابل">
+<hr>
 
-  <div id="messages"></div>
+<h3 id="title"></h3>
+<div id="msgs"></div>
 
-  <input id="msg" placeholder="پیام...">
-  <button onclick="sendMsg()">ارسال</button>
+<input id="text" placeholder="پیام...">
+<button onclick="send()">ارسال</button>
+
 </div>
 
 <script>
+
+// 🔥 Supabase (اینو عوض کن)
 const supabase = window.supabase.createClient(
-  "https://ctfkzshjeppxmckxgcxb.supabase.co",
-  "sb_publishable_4kdBgIgvDyU2Vd9u6N--Ng_3xpqZjMK"
+"https://ctfkzshjeppxmckxgcxb.supabase.co",
+"sb_publishable_4kdBgIgvDyU2Vd9u6N--Ng_3xpqZjMK"
 );
 
-let currentUser = null;
+let me = null;
+let selected = null;
 
 // 🔥 ثبت نام
-async function register() {
-  let u = username.value.trim();
-  let p = password.value.trim();
+async function register(){
+let u = document.getElementById("u").value;
+let p = document.getElementById("p").value;
 
-  if (u.length < 6 || p.length < 6) {
-    alert("حداقل ۶ کاراکتر لازم است");
-    return;
-  }
+if(u.length<6||p.length<6){
+alert("حداقل ۶ کاراکتر");
+return;
+}
 
-  await supabase.from("users").insert([
-    { username: u, password: p }
-  ]);
+await supabase.from("users").insert([
+{username:u,password:p}
+]);
 
-  alert("ثبت نام شد");
+alert("ثبت شد");
 }
 
 // 🔥 ورود
-async function login() {
-  let u = username.value.trim();
-  let p = password.value.trim();
+async function login(){
+let u = document.getElementById("u").value;
+let p = document.getElementById("p").value;
 
-  let { data } = await supabase
-    .from("users")
-    .select("*")
-    .eq("username", u)
-    .eq("password", p);
+let {data} = await supabase
+.from("users")
+.select("*")
+.eq("username",u)
+.eq("password",p);
 
-  if (data.length > 0) {
-    currentUser = u;
-    authBox.style.display = "none";
-    chatBox.style.display = "block";
-    loadMessages();
-  } else {
-    alert("یافت نشد");
-  }
+if(data.length>0){
+me=u;
+auth.style.display="none";
+chat.style.display="block";
+loadUsers();
+}else{
+alert("اشتباه");
+}
 }
 
-// 🔥 ارسال پیام خصوصی
-async function sendMsg() {
-  let text = msg.value.trim();
-  let receiver = targetUser.value.trim();
+// 🔥 لیست کاربران
+async function loadUsers(){
+let {data}=await supabase.from("users").select("*");
 
-  if (!text || !receiver) return;
+users.innerHTML="";
 
-  await supabase.from("messages").insert([
-    {
-      sender: currentUser,
-      receiver: receiver,
-      message: text
-    }
-  ]);
-
-  msg.value = "";
-  loadMessages();
+data.forEach(u=>{
+if(u.username!==me){
+users.innerHTML+=`
+<div class="user" onclick="openChat('${u.username}')">
+${u.username}
+</div>
+`;
+}
+});
 }
 
-// 🔥 لود پیام‌های بین دو نفر
-async function loadMessages() {
-  let receiver = targetUser.value.trim();
-
-  let { data } = await supabase
-    .from("messages")
-    .select("*")
-    .or(
-      `and(sender.eq.${currentUser},receiver.eq.${receiver}),and(sender.eq.${receiver},receiver.eq.${currentUser})`
-    )
-    .order("id", { ascending: true });
-
-  messages.innerHTML = "";
-
-  data.forEach(m => {
-    messages.innerHTML += `
-      <div class="msg">
-        <b>${m.sender}:</b> ${m.message}
-      </div>
-    `;
-  });
+// 🔥 باز کردن چت
+async function openChat(user){
+selected=user;
+title.innerText="چت با "+user;
+loadMessages();
 }
+
+// 🔥 ارسال پیام
+async function send(){
+let text=document.getElementById("text").value;
+if(!text||!selected) return;
+
+await supabase.from("messages").insert([
+{
+sender:me,
+receiver:selected,
+message:text
+}
+]);
+
+document.getElementById("text").value="";
+loadMessages();
+}
+
+// 🔥 لود پیام‌ها
+async function loadMessages(){
+
+let {data}=await supabase
+.from("messages")
+.select("*")
+.or(
+`and(sender.eq.${me},receiver.eq.${selected}),and(sender.eq.${selected},receiver.eq.${me})`
+)
+.order("id",{ascending:true});
+
+msgs.innerHTML="";
+
+data.forEach(m=>{
+msgs.innerHTML+=`
+<div class="msg">
+<b>${m.sender}:</b> ${m.message}
+</div>
+`;
+});
+}
+
 </script>
 
 </body>
