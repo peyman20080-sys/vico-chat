@@ -2,201 +2,47 @@
 <html lang="fa">
 <head>
 <meta charset="UTF-8">
-<title>Vico Chat</title>
-
+<title>Login</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-<style>
-body{
-margin:0;
-font-family:sans-serif;
-background:#0f172a;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-color:white;
-}
-
-.box{
-width:360px;
-background:#111827;
-padding:15px;
-border-radius:12px;
-}
-
-input,button{
-width:100%;
-padding:10px;
-margin-top:8px;
-border:none;
-border-radius:8px;
-}
-
-button{
-background:#2563eb;
-color:white;
-cursor:pointer;
-}
-
-#chat{display:none;}
-
-.user{
-padding:8px;
-margin:5px 0;
-background:#374151;
-border-radius:6px;
-cursor:pointer;
-}
-
-.msg{
-background:#374151;
-margin:5px 0;
-padding:6px;
-border-radius:6px;
-}
-</style>
 </head>
 
 <body>
 
-<!-- AUTH -->
-<div class="box" id="auth">
-<h3>ثبت نام / ورود</h3>
+<h2>ورود</h2>
 
-<input id="u" placeholder="نام کاربری (۶+)">
-<input id="p" type="password" placeholder="رمز (۶+)">
+<input id="u" placeholder="username">
+<input id="p" type="password" placeholder="password">
 
-<button onclick="register()">ثبت نام</button>
 <button onclick="login()">ورود</button>
-</div>
-
-<!-- CHAT -->
-<div class="box" id="chat">
-
-<h3>کاربران</h3>
-<div id="users"></div>
-
-<hr>
-
-<h3 id="title"></h3>
-<div id="msgs"></div>
-
-<input id="text" placeholder="پیام...">
-<button onclick="send()">ارسال</button>
-
-</div>
+<button onclick="goSignup()">ثبت‌نام</button>
 
 <script>
 
-// 🔥 Supabase (اینو عوض کن)
 const supabase = window.supabase.createClient(
 "https://ctfkzshjeppxmckxgcxb.supabase.co",
 "sb_publishable_4kdBgIgvDyU2Vd9u6N--Ng_3xpqZjMK"
 );
 
-let me = null;
-let selected = null;
-
-// 🔥 ثبت نام
-async function register(){
-let u = document.getElementById("u").value;
-let p = document.getElementById("p").value;
-
-if(u.length<6||p.length<6){
-alert("حداقل ۶ کاراکتر");
-return;
-}
-
-await supabase.from("users").insert([
-{username:u,password:p}
-]);
-
-alert("ثبت شد");
-}
-
-// 🔥 ورود
 async function login(){
-let u = document.getElementById("u").value;
-let p = document.getElementById("p").value;
+let u=document.getElementById("u").value;
+let p=document.getElementById("p").value;
 
-let {data} = await supabase
+let {data}=await supabase
 .from("users")
 .select("*")
 .eq("username",u)
 .eq("password",p);
 
 if(data.length>0){
-me=u;
-auth.style.display="none";
-chat.style.display="block";
-loadUsers();
+localStorage.setItem("user",u);
+location.href="chat.html";
 }else{
 alert("اشتباه");
 }
 }
 
-// 🔥 لیست کاربران
-async function loadUsers(){
-let {data}=await supabase.from("users").select("*");
-
-users.innerHTML="";
-
-data.forEach(u=>{
-if(u.username!==me){
-users.innerHTML+=`
-<div class="user" onclick="openChat('${u.username}')">
-${u.username}
-</div>
-`;
-}
-});
-}
-
-// 🔥 باز کردن چت
-async function openChat(user){
-selected=user;
-title.innerText="چت با "+user;
-loadMessages();
-}
-
-// 🔥 ارسال پیام
-async function send(){
-let text=document.getElementById("text").value;
-if(!text||!selected) return;
-
-await supabase.from("messages").insert([
-{
-sender:me,
-receiver:selected,
-message:text
-}
-]);
-
-document.getElementById("text").value="";
-loadMessages();
-}
-
-// 🔥 لود پیام‌ها
-async function loadMessages(){
-
-let {data}=await supabase
-.from("messages")
-.select("*")
-.or(
-`and(sender.eq.${me},receiver.eq.${selected}),and(sender.eq.${selected},receiver.eq.${me})`
-)
-.order("id",{ascending:true});
-
-msgs.innerHTML="";
-
-data.forEach(m=>{
-msgs.innerHTML+=`
-<div class="msg">
-<b>${m.sender}:</b> ${m.message}
-</div>
-`;
-});
+function goSignup(){
+location.href="signup.html";
 }
 
 </script>
