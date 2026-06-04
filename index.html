@@ -8,105 +8,130 @@
 
 <style>
 body {
-  margin: 0;
   font-family: sans-serif;
   background: #0f172a;
+  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
 
-.chat {
-  width: 380px;
-  height: 600px;
+.box {
+  width: 360px;
   background: #111827;
+  padding: 15px;
   border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
 }
 
-.header {
-  background: #2563eb;
-  color: white;
-  padding: 12px;
-  text-align: center;
-  font-weight: bold;
-}
-
-.messages {
-  flex: 1;
+input, button {
+  width: 100%;
   padding: 10px;
-  overflow-y: auto;
-}
-
-.msg {
-  background: #374151;
-  color: white;
-  padding: 6px 10px;
-  margin: 5px 0;
+  margin-top: 8px;
   border-radius: 8px;
-}
-
-.input-box {
-  display: flex;
-  padding: 10px;
-  background: #1f2937;
-  gap: 6px;
-}
-
-input {
-  flex: 1;
-  padding: 10px;
   border: none;
-  border-radius: 8px;
-  outline: none;
 }
 
 button {
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+  background: #2563eb;
   color: white;
-  background: #22c55e;
+  cursor: pointer;
+}
+
+.chat { display: none; }
+
+.msg {
+  background: #374151;
+  margin: 5px 0;
+  padding: 6px;
+  border-radius: 6px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="chat">
-  <div class="header">Vico Chat</div>
+<!-- 🔵 ثبت نام / ورود -->
+<div class="box" id="authBox">
+  <h3>ثبت نام / ورود</h3>
 
-  <div class="messages" id="messages"></div>
+  <input id="username" placeholder="نام کاربری (حداقل ۶)">
+  <input id="password" type="password" placeholder="رمز (حداقل ۶)">
 
-  <div class="input-box">
-    <input id="msg" placeholder="پیام بنویس..." />
-    <button onclick="sendMsg()">ارسال</button>
-  </div>
+  <button onclick="register()">ثبت نام</button>
+  <button onclick="login()">ورود</button>
+</div>
+
+<!-- 🟢 چت -->
+<div class="box chat" id="chatBox">
+
+  <h3>Vico Chat</h3>
+
+  <input id="targetUser" placeholder="نام کاربری طرف مقابل">
+
+  <div id="messages"></div>
+
+  <input id="msg" placeholder="پیام...">
+  <button onclick="sendMsg()">ارسال</button>
 </div>
 
 <script>
-// 🔴 1. Supabase Config
 const supabase = window.supabase.createClient(
-  "https://peyman20080-sys.github.io/vico-chat/",
-  "https://ctfkzshjeppxmckxgcxb.supabase.co"
+  "https://ctfkzshjeppxmckxgcxb.supabase.co",
+  "sb_publishable_4kdBgIgvDyU2Vd9u6N--Ng_3xpqZjMK"
 );
 
-// 🔴 کاربر فعلی (فعلاً دستی)
-let currentUser = prompt("نام کاربری خودت رو وارد کن");
+let currentUser = null;
 
-// 🔴 2. ارسال پیام
+// 🔥 ثبت نام
+async function register() {
+  let u = username.value.trim();
+  let p = password.value.trim();
+
+  if (u.length < 6 || p.length < 6) {
+    alert("حداقل ۶ کاراکتر لازم است");
+    return;
+  }
+
+  await supabase.from("users").insert([
+    { username: u, password: p }
+  ]);
+
+  alert("ثبت نام شد");
+}
+
+// 🔥 ورود
+async function login() {
+  let u = username.value.trim();
+  let p = password.value.trim();
+
+  let { data } = await supabase
+    .from("users")
+    .select("*")
+    .eq("username", u)
+    .eq("password", p);
+
+  if (data.length > 0) {
+    currentUser = u;
+    authBox.style.display = "none";
+    chatBox.style.display = "block";
+    loadMessages();
+  } else {
+    alert("یافت نشد");
+  }
+}
+
+// 🔥 ارسال پیام خصوصی
 async function sendMsg() {
   let text = msg.value.trim();
-  if (!text) return;
+  let receiver = targetUser.value.trim();
+
+  if (!text || !receiver) return;
 
   await supabase.from("messages").insert([
     {
       sender: currentUser,
-      receiver: "public",
+      receiver: receiver,
       message: text
     }
   ]);
@@ -115,11 +140,16 @@ async function sendMsg() {
   loadMessages();
 }
 
-// 🔴 3. گرفتن پیام‌ها
+// 🔥 لود پیام‌های بین دو نفر
 async function loadMessages() {
+  let receiver = targetUser.value.trim();
+
   let { data } = await supabase
     .from("messages")
     .select("*")
+    .or(
+      `and(sender.eq.${currentUser},receiver.eq.${receiver}),and(sender.eq.${receiver},receiver.eq.${currentUser})`
+    )
     .order("id", { ascending: true });
 
   messages.innerHTML = "";
@@ -131,22 +161,7 @@ async function loadMessages() {
       </div>
     `;
   });
-
-  messages.scrollTop = messages.scrollHeight;
 }
-
-// 🔴 4. realtime آپدیت
-supabase
-  .channel("chat")
-  .on(
-    "postgres_changes",
-    { event: "*", schema: "public", table: "messages" },
-    () => loadMessages()
-  )
-  .subscribe();
-
-// 🔴 شروع
-loadMessages();
 </script>
 
 </body>
