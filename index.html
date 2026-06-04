@@ -2,50 +2,161 @@
 <html lang="fa">
 <head>
 <meta charset="UTF-8">
-<title>Login</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<title>Vico Bot</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+font-family:sans-serif;
+box-sizing:border-box;
+}
+
+body{
+background:linear-gradient(135deg,#0f172a,#1e293b);
+color:white;
+}
+
+/* HEADER */
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 20px;
+background:#111827;
+position:sticky;
+top:0;
+}
+
+.logo{
+font-size:20px;
+font-weight:bold;
+color:#38bdf8;
+}
+
+/* HAMBURGER */
+.hamburger{
+width:30px;
+cursor:pointer;
+}
+
+.hamburger div{
+height:3px;
+background:white;
+margin:5px 0;
+transition:0.3s;
+}
+
+/* MENU */
+.menu{
+position:fixed;
+top:0;
+right:-250px;
+width:200px;
+height:100%;
+background:#0f172a;
+padding:20px;
+transition:0.3s;
+}
+
+.menu a{
+display:block;
+color:white;
+text-decoration:none;
+margin:15px 0;
+}
+
+.menu.active{
+right:0;
+}
+
+/* HERO */
+.hero{
+text-align:center;
+padding:60px 20px;
+}
+
+.hero h1{
+font-size:32px;
+color:#38bdf8;
+}
+
+.hero p{
+margin-top:10px;
+color:#cbd5e1;
+}
+
+/* CARD */
+.card{
+background:#111827;
+margin:20px;
+padding:15px;
+border-radius:10px;
+}
+
+button{
+margin-top:10px;
+padding:10px;
+border:none;
+border-radius:8px;
+background:#38bdf8;
+color:black;
+cursor:pointer;
+}
+</style>
 </head>
 
 <body>
 
-<h2>ورود</h2>
+<header>
+<div class="logo">Vico Bot</div>
 
-<input id="u" placeholder="username">
-<input id="p" type="password" placeholder="password">
+<div class="hamburger" onclick="toggleMenu()">
+<div></div>
+<div></div>
+<div></div>
+</div>
+</header>
 
-<button onclick="login()">ورود</button>
-<button onclick="goSignup()">ثبت‌نام</button>
+<div class="menu" id="menu">
+<a href="#about">درباره من</a>
+<a href="#bot">ربات Vico</a>
+<a href="#contact">ارتباط</a>
+</div>
+
+<section class="hero">
+<h1>Vico Bot</h1>
+<p>یک ربات هوشمند برای روبیکا</p>
+</section>
+
+<section class="card" id="about">
+<h2>درباره من</h2>
+<p>
+من سازنده ربات Vico هستم 👨‍💻<br>
+۱۸ ساله هستم و بیش از ۳ سال تجربه در برنامه‌نویسی و ساخت ربات دارم.
+</p>
+</section>
+
+<section class="card" id="bot">
+<h2>ربات Vico</h2>
+<p>
+ربات Vico برای مدیریت، سرگرمی و خدمات هوشمند ساخته شده.
+</p>
+<button onclick="alert('ربات Vico معرفی شد 🚀')">
+بیشتر
+</button>
+</section>
+
+<section class="card" id="contact">
+<h2>ارتباط</h2>
+<p>برای ارتباط با من از طریق ربات یا کانال اقدام کنید.</p>
+</section>
 
 <script>
-
-const supabase = window.supabase.createClient(
-"https://ctfkzshjeppxmckxgcxb.supabase.co",
-"sb_publishable_4kdBgIgvDyU2Vd9u6N--Ng_3xpqZjMK"
-);
-
-async function login(){
-let u=document.getElementById("u").value;
-let p=document.getElementById("p").value;
-
-let {data}=await supabase
-.from("users")
-.select("*")
-.eq("username",u)
-.eq("password",p);
-
-if(data.length>0){
-localStorage.setItem("user",u);
-location.href="chat.html";
-}else{
-alert("اشتباه");
+function toggleMenu(){
+document.getElementById("menu").classList.toggle("active");
 }
-}
-
-function goSignup(){
-location.href="signup.html";
-}
-
 </script>
 
 </body>
-</html>
+  </html>
